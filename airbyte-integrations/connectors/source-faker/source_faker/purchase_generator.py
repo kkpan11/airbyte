@@ -6,8 +6,9 @@ import datetime
 from multiprocessing import current_process
 from typing import Dict, List
 
-from airbyte_cdk.models import AirbyteRecordMessage, Type
 from mimesis import Datetime, Numeric
+
+from airbyte_cdk.models import AirbyteRecordMessage, Type
 
 from .airbyte_message_with_cached_json import AirbyteMessageWithCachedJSON
 from .utils import format_airbyte_time, now_millis
@@ -72,6 +73,7 @@ class PurchaseGenerator:
             id = user_id + i + 1 - id_offset
             time_a = dt.datetime()
             time_b = dt.datetime()
+            updated_at = format_airbyte_time(datetime.datetime.now())
             created_at = time_a if time_a <= time_b else time_b
             product_id = numeric.integer_number(1, total_products)
             added_to_cart_at = self.random_date_in_range(created_at)
@@ -88,6 +90,8 @@ class PurchaseGenerator:
                 "id": id,
                 "product_id": product_id,
                 "user_id": user_id + 1,
+                "created_at": created_at,
+                "updated_at": updated_at,
                 "added_to_cart_at": format_airbyte_time(added_to_cart_at) if added_to_cart_at is not None else None,
                 "purchased_at": format_airbyte_time(purchased_at) if purchased_at is not None else None,
                 "returned_at": format_airbyte_time(returned_at) if returned_at is not None else None,

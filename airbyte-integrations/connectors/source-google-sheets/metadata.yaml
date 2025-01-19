@@ -1,24 +1,58 @@
 data:
+  ab_internal:
+    ql: 400
+    sl: 300
   allowedHosts:
     hosts:
       - "*.googleapis.com"
+  connectorBuildOptions:
+    baseImage: docker.io/airbyte/python-connector-base:3.0.0@sha256:1a0845ff2b30eafa793c6eee4e8f4283c2e52e1bbd44eed6cb9e9abd5d34d844
   connectorSubtype: file
   connectorType: source
   definitionId: 71607ba1-c0ac-4799-8049-7f4b90dd50f7
-  dockerImageTag: 0.2.39
+  dockerImageTag: 0.8.5
   dockerRepository: airbyte/source-google-sheets
+  documentationUrl: https://docs.airbyte.com/integrations/sources/google-sheets
   githubIssueLabel: source-google-sheets
   icon: google-sheets.svg
-  license: MIT
+  license: Elv2
+  maxSecondsBetweenMessages: 60
   name: Google Sheets
-  registries:
+  remoteRegistries:
+    pypi:
+      enabled: true
+      packageName: airbyte-source-google-sheets
+  registryOverrides:
     cloud:
-      dockerImageTag: 0.2.21
       enabled: true
     oss:
       enabled: true
   releaseStage: generally_available
-  documentationUrl: https://docs.airbyte.com/integrations/sources/google-sheets
+  supportLevel: certified
   tags:
     - language:python
+    - cdk:python
+  connectorTestSuitesOptions:
+    - suite: liveTests
+      testConnections:
+        - name: temp-google-sheets_service_config_dev_null
+          id: 035f390f-591f-4bb5-b6d5-52145627befb
+    - suite: unitTests
+    - suite: acceptanceTests
+      testSecrets:
+        - name: SECRET_SOURCE-GOOGLE_SHEETS_CREDS
+          fileName: config.json
+          secretStore:
+            type: GSM
+            alias: airbyte-connector-testing-secret-store
+        - name: SECRET_SOURCE-GOOGLE_SHEETS_SERVICE_CREDS
+          fileName: service_config.json
+          secretStore:
+            type: GSM
+            alias: airbyte-connector-testing-secret-store
+        - name: SECRET_SOURCE-GOOGLE_SHEETS_WITH_URL_CREDS
+          fileName: config_with_url.json
+          secretStore:
+            type: GSM
+            alias: airbyte-connector-testing-secret-store
 metadataSpecVersion: "1.0"

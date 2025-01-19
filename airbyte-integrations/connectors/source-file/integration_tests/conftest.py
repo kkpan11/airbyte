@@ -6,6 +6,7 @@
 import json
 import os
 import random
+import shutil
 import socket
 import string
 import tempfile
@@ -22,6 +23,7 @@ from google.api_core.exceptions import Conflict
 from google.cloud import storage
 from paramiko.client import AutoAddPolicy, SSHClient
 from paramiko.ssh_exception import SSHException
+
 
 HERE = Path(__file__).parent.absolute()
 
@@ -81,7 +83,17 @@ def is_ssh_ready(ip, port):
 
 
 @pytest.fixture(scope="session")
-def ssh_service(docker_ip, docker_services):
+def move_sample_files_to_tmp():
+    """Copy sample files to /tmp so that they can be accessed by the dockerd service in the context of Dagger test runs.
+    The sample files are mounted to the SSH service from the container under test (container) following instructions of docker-compose.yml in this directory."""
+    sample_files = Path(HERE / "sample_files")
+    shutil.copytree(sample_files, "/tmp/s3_sample_files")
+    yield True
+    shutil.rmtree("/tmp/s3_sample_files")
+
+
+@pytest.fixture(scope="session")
+def ssh_service(move_sample_files_to_tmp, docker_ip, docker_services):
     """Ensure that SSH service is up and responsive."""
     # `port_for` takes a container port and returns the corresponding host port
     port = docker_services.port_for("ssh", 22)

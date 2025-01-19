@@ -2,10 +2,10 @@
 # Copyright (c) 2023 Airbyte, Inc., all rights reserved.
 #
 
-from airbyte_cdk.models import SyncMode
+from source_braze import DatetimeIncrementalSyncComponent
+
 from airbyte_cdk.sources.declarative.requesters import RequestOption
 from airbyte_cdk.sources.declarative.requesters.request_option import RequestOptionType
-from source_braze import DatetimeIncrementalSyncComponent
 
 
 def test_datetime_slicer():
@@ -31,4 +31,4 @@ def test_datetime_slicer():
         {"start_time": "2022-12-04", "end_time": "2022-12-06", "step": 3},
         {"start_time": "2022-12-07", "end_time": "2022-12-08", "step": 2},
     ]
-    assert slicer.stream_slices(SyncMode.incremental, stream_state={}) == expected_slices
+    assert slicer.stream_slices() == expected_slices
